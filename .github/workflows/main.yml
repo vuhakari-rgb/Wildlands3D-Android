@@ -1,56 +1,59 @@
-
 name: Build Wildlands 3D APK
 
 on:
-  push:
-    branches: [main]
-  workflow_dispatch:
+push:
+branches:
+- main
+workflow_dispatch:
 
 permissions:
-  contents: read
+contents: read
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download project files
-        uses: actions/checkout@v4
+build:
+runs-on: ubuntu-latest
 
-      - name: Check ZIP file
-        run: |
-          ls -la
-          test -f Wildlands3D_Android_Project.zip
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v4
 
-      - name: Extract project
-        run: unzip -q Wildlands3D_Android_Project.zip
+  - name: Check project ZIP
+    run: |
+      test -f Wildlands3D_Android_Project.zip || {
+        echo "ERROR: Khong tim thay Wildlands3D_Android_Project.zip o thu muc goc."
+        exit 1
+      }
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
+  - name: Extract Android project
+    run: unzip -q Wildlands3D_Android_Project.zip
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          accept-android-sdk-licenses: true
-          log-accepted-android-sdk-licenses: false
+  - name: Set up Java
+    uses: actions/setup-java@v4
+    with:
+      distribution: temurin
+      java-version: '17'
 
-      - name: Install Android packages
-        run: |
-          sdkmanager --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+  - name: Set up Android SDK
+    uses: android-actions/setup-android@v3
+    with:
+      accept-android-sdk-licenses: true
+      packages: platform-tools
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.7'
+  - name: Install Android SDK packages
+    run: |
+      sdkmanager --install "platforms;android-35" "build-tools;35.0.0"
 
-      - name: Build APK
-        run: gradle --no-daemon -p Wildlands3D_Android_Project assembleDebug
+  - name: Set up Gradle
+    uses: gradle/actions/setup-gradle@v4
+    with:
+      gradle-version: '8.7'
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Wildlands3D-APK
-          path: Wildlands3D_Android_Project/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
+  - name: Build APK
+    run: gradle --no-daemon -p Wildlands3D_Android_Project assembleDebug
+
+  - name: Upload APK
+    uses: actions/upload-artifact@v4
+    with:
+      name: Wildlands3D-APK
+      path: Wildlands3D_Android_Project/app/build/outputs/apk/debug/app-debug.apk
+      if-no-files-found: error
