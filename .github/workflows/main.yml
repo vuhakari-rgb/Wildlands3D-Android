@@ -1,5 +1,4 @@
-
-name: Build Wildlands 3D APK
+name: Build Wildlands 3D 
 
 on:
   push:
