@@ -1,4 +1,4 @@
-name: Build Wildlands 3D APK
+name: Build Wildlands 3D APK 
 
 on:
   push:
@@ -80,6 +80,6 @@ jobs:
           name: Wildlands3D-APK
           path: |
             Wildlands3D_Android_Project/app/build/outputs/apk/debug/app-debug.apk
-            app/build/outputs/apk/debug/app-debug.apk
+           app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 7
